@@ -2,14 +2,88 @@
 <html>
 <head>
 	<title>Whack-a-Mole</title>
-	<link rel="stylesheet" href="/css/whack.css">
+	<link rel="stylesheet" type="text/css" href="/css/whack.css">
 </head>
 <body>
-	<h1>Whack-a-Mole</h1>
-	<div>
-		<div class = "hole"></div>
-		<div class = "hole"></div>
-		<div class = "hole"></div>
+	<div id = "start">Start</div>
+	<div id = "timeleft">Time Remaining:<br><div id = "time"></div></div>
+	<div id = "totals">Total Moles: <div id = "totalnum"></div></div>
+	<div id = "scoreboard">Moles Whacked: <div id = "score"></div></div>
+	<div id = "gradecard">Grade: <div id = "grade"></div></div>
+	<div id = "holes">
+		<div class = "hole1" id = "tl"><div class = "dirt"></div></div>
+		<div class = "hole2" id = "tm"><div class = "dirt"></div></div>
+		<div class = "hole3" id = "tr"><div class = "dirt"></div></div>
+		<div class = "hole1" id = "ml"><div class = "dirt"></div></div>
+		<div class = "hole2" id = "mm"><div class = "dirt"></div></div>
+		<div class = "hole3" id = "mr"><div class = "dirt"></div></div>
+		<div class = "hole1" id = "bl"><div class = "dirt"></div></div>
+		<div class = "hole2" id = "bm"><div class = "dirt"></div></div>
+		<div class = "hole3" id = "br"><div class = "dirt"></div></div>
 	</div>
+<script src = "/js/jquery.js"></script>
+<script>
+"Use Strict";
+(function() {
+// Necessary Global Variables
+	var spaces = ["tl", "tm", "tr", "ml", "mm", "mr", "bl", "bm", "br"];
+	var streak = 0;
+	var tot = 0;
+	var grade = 0;
+	$("#grade").html(grade + "%");
+	$("#time").html(0);
+	$("#score").html(streak);
+	$("#totalnum").html(tot);
+
+
+// Starts the Game
+	$("#start").click(function() {
+		timer();
+	});
+
+// Sets the timer for the game
+	function timer() {
+		var timestart = 30;
+		var timeend = 0;
+		var go = setInterval(function() {
+			if(timestart < timeend) {
+				clearInterval(go);
+			} else {
+				$("#time").html(timestart + " seconds");
+				popup();
+				timestart -= 1;
+			}
+		}, 1000);
+	}
+
+// Causes the moles to pop up
+	function popup() {
+		var random = (Math.floor(Math.random()* 9));
+		var first = 0;
+		var second = 1;
+		var goagain = setInterval(function() {
+			if(first >= second) {
+				$("#" + spaces[random] + "").css("opacity", "0");
+				$("#totalnum").html(tot++);
+				clearInterval(goagain);
+			} else {
+				$("#" + spaces[random] + "").css("opacity", "1");
+				first++;
+			}
+		}, 900);
+	}
+
+// Gives you points
+	$("#holes").children().click(function(){
+		if($(this).css("opacity") == 1) {
+			$("#score").html(streak++);
+			$("#grade").html(Math.floor((streak/tot)*100)+"%");
+			popup();
+		} else {
+
+		}
+	});
+})();
+</script>
 </body>
 </html>
