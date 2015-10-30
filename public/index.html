@@ -7,9 +7,12 @@
 </head>
 <body>
 	<div id = "banner"><br><h3>Whack-a-Mole</h3></div>
+
+	<!-- The Homeowner Picture -->
 	<div id = "homeowner"></div>
+
 	<!-- Start Button -->
-	<div id = "start">Start</div>
+	<a href = "#holes"><div id = "start">Start</div></a>
 
 	<!-- Timer -->
 	<div id = "timeleft">Time Remaining:<br><div id = "time"></div></div>
@@ -39,6 +42,9 @@
 
 	<!-- Highest # of Rounds Completed -->
 	<div id = "highcount">High Score: <div id = "high">0</div></div>
+
+	<!-- Clear the High Score -->
+	<div id = "clearhigh">Clear High Score</div>
 	
 	<!-- The Holes Themselves -->
 	<div id = "holes">
@@ -72,9 +78,30 @@
 	$("#score").html(streak);
 	$("#totalnum").html(tot);
 
+// Changes the dirt
+	$("h3").on("click", function() {
+		var ran = (Math.floor(Math.random()*5));
+		var background = ["http://whackamole.dev/img/dirt.png", "http://whackamole.dev/img/dirt1.png", "http://whackamole.dev/img/dirt2.png", "http://whackamole.dev/img/dirt3.png", "http://whackamole.dev/img/dirt4.png"];
+		$("#holes").css("background-image", "url(" + background[ran] + ")");
+	});
+
+// Sets the interior of the High Score
+	if(localStorage.getItem("highscore") >= 1) {
+		$("#high").html(localStorage.getItem("highscore"));
+	} else {
+		$("#high").html(0);
+	}
+
 // Starts the Game
 	$("#start").click(function() {
+		clicker();
 		timer();
+	});
+
+// Clears the High Score
+	$("#clearhigh").click(function() {
+		localStorage.clear();
+		$("#high").html(0);
 	});
 
 // Sets the timer for the game
@@ -137,47 +164,51 @@
 	}
 
 // Gives you points
-	$("#holes").children().click(function(){
-		var audio1 = new Audio('whack.wav');
-		var audio4 = new Audio('no.wav');
-	// On Normal
-		if($("#normal").is(':checked')) {
-			if($(this).css("opacity") == 1) {
-				audio1.play();
-				$("#score").html(streak++);
-				$("#grade").html(Math.floor((streak/tot)*100) + "%");
-				popup();
-				$(this).css("opacity", "0");
-			} else {
+	function clicker() {
+		$("#holes").children().click(function(){
+			var audio1 = new Audio('whack.wav');
+			var audio4 = new Audio('no.wav');
+		// On Normal
+			if($("#normal").is(':checked')) {
+				if($(this).css("opacity") == 1) {
+					audio1.play();
+					$("#score").html(streak++);
+					$("#grade").html(Math.floor((streak/tot)*100) + "%");
+					popup();
+					$(this).css("opacity", "0");
+				} else {
+
+				}
+		// On Challenge
+			} else if($("#challenge").is(':checked')) {
+				if($(this).css("opacity") == 1) {
+					audio1.play();
+					$("#score").html(streak++);
+					$("#grade").html(Math.floor((streak/tot)*100) + "%");
+					popup();
+					$(this).css("opacity", "0");
+				} else {
+					$("#score").html(streak-=1);
+					audio4.play();
+					location.reload(true);
+				}	
+		// On Superchallenge 
+			} else if($("#superchallenge").is(':checked')) {
+				if($(this).css("opacity") == 1) {
+					audio1.play();
+					$("#score").html(streak++);
+					$("#grade").html(Math.floor((streak/tot)*100) + "%");
+					popup();
+					$(this).css("opacity", "0");
+				} else if($(this).css("opacity") == 0) {
+					$("#score").html(streak-=1);
+					audio4.play();
+					location.reload(true);
+				}
 
 			}
-	// On Challenge
-		} else if($("#challenge").is(':checked')) {
-			if($(this).css("opacity") == 1) {
-				audio1.play();
-				$("#score").html(streak++);
-				$("#grade").html(Math.floor((streak/tot)*100) + "%");
-				popup();
-				$(this).css("opacity", "0");
-			} else {
-				$("#score").html(streak-=1);
-				audio4.play();
-			}	
-	// On Superchallenge 
-		} else if($("#superchallenge").is(':checked')) {
-			if($(this).css("opacity") == 1) {
-				audio1.play();
-				$("#score").html(streak++);
-				$("#grade").html(Math.floor((streak/tot)*100) + "%");
-				popup();
-				$(this).css("opacity", "0");
-			} else {
-				$("#score").html(streak-=1);
-				audio4.play();
-			}
-
-		}
-	});
+		});
+	}
 
 // Determines your results
 	function check() {
@@ -198,7 +229,8 @@
 			audio2.play();
 			alert("Game Over!");
 			if($("#high").html() < round){
-				$("#high").html(round);
+				localStorage.setItem("highscore", round);
+				$("#high").html(localStorage.getItem("highscore"));
 			} else {
 
 			}
@@ -210,7 +242,7 @@
 
 // Brings up the game manual
 	$("#manual").click(function() {
-		alert("When a mole (of any kind) pops up, click on it, and you'll earn a point. Every point you earn goes to your grade, which is the percentage of the total number of moles that popped up that you clicked. If your grade at the end of the round is a 40% or higher, then you will proceed to the next round. If it is under 40%, then it is Game Over! Your goal is to win as many rounds as possible.                                               There are three game modes: Gardener (Normal), Suburban Gardener (Challenge), and Gated Community Gardener (Superchallenge). The goal is the same in all modes, but the game itself varies in each. In Suburban Gardener mode, you are penalized by one point every time you click on the dirt. In Gated Community Gardener mode, you are penalized for clicking on the dirt, and occasionally, the homeowners will come and yell at you.                                                                    Have fun!")
+		alert("When a mole (of any kind) pops up, click on it, and you'll earn a point. Every point you earn goes to your grade, which is the percentage of the total number of moles that popped up that you clicked. If your grade at the end of the round is a 40% or higher, then you will proceed to the next round. If it is under 40%, then it is Game Over! Your goal is to win as many rounds as possible.                                               There are three game modes: Gardener (Normal), Suburban Gardener (Challenge), and Gated Community Gardener (Superchallenge). The goal is the same in all modes, but the game itself varies in each. In Suburban Gardener mode, you are penalized by one point every time you click on the dirt. In Gated Community Gardener mode, you are penalized for clicking on the dirt, and occasionally, the homeowners will bother you.");
 	});
 })();
 </script>
